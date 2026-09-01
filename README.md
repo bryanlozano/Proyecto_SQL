@@ -1,4 +1,4 @@
-![Universidad Nacional Hermilio Valdizán](./picture/baneer%20vertical.png)
+![Universidad Nacional Hermilio Valdizán](./Picture/Unheval.png)
 # Proyecto SQL: Análisis Académico de Egresados - Rendimiento y Trayectoria Universitaria
 
 ## Resumen (Overview)
@@ -26,27 +26,6 @@ Analizar la información académica y demográfica de los egresados de pregrado 
 8. Segmentar a los egresados según su rendimiento académico para identificar patrones de alto y bajo desempeño.
 9. Construir rankings académicos y geográficos mediante técnicas avanzadas de SQL.
 
-
-
-## 📩 RRSS
-<p align="center">
-  <a href="https://www.linkedin.com/in/jhon-velasque/">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white" />
-  </a>
-  <a href="https://www.youtube.com/@HOLAMeDicenJHON">
-    <img src="https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white" />
-  </a>
-  <a href="https://www.instagram.com/hola_me_dicen_jhon/">
-    <img src="https://img.shields.io/badge/Instagram-E4405F?style=flat-square&logo=instagram&logoColor=white" />
-  </a>
-  <a href="https://www.tiktok.com/@medicenjhon0?is_from_webapp=1&sender_device=pc">
-    <img src="https://img.shields.io/badge/TikTok-000000?style=flat-square&logo=tiktok&logoColor=white" />
-  </a>
-  <a href="https://wa.link/kzegye">
-    <img src="https://img.shields.io/badge/WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white" />
-  </a>
-</p>
-
 ## Estructura del Proyecto
 
 - [Sobre los Datos](#sobre-los-datos)
@@ -56,21 +35,51 @@ Analizar la información académica y demográfica de los egresados de pregrado 
 
 ## Sobre los Datos
 
-Los datos originales, junto con una explicación de cada columna, se pueden encontrar [aquí](https://www.kaggle.com/datasets/mahmoudemadabdallah/hr-analytics-employee-attrition-and-performance/data?select=Employee.csv).
+Los datos originales, junto con una explicación de cada columna, se pueden encontrar [aquí](https://www.datosabiertos.gob.pe/dataset/alumnos-egresados-de-pregrado-de-la-universidad-nacional-hermilio-valdiz%C3%A1n-2024-unheval).
 
-El conjunto de datos incluye cinco tablas que capturan evaluaciones de desempeño, datos demográficos de los empleados, niveles de satisfacción y calificaciones, distribuidos en más de 8,100 registros y 40 columnas.
+El dataset fue transformado y normalizado en un modelo relacional compuesto por tres tablas principales:
 
-![HR Analytics](./picture/muestra_tabla_employe.png)
+`Dim_Escuela`
+`Dim_Ubicacion`
+`Fact_Egresados`
+
+La normalización permitió garantizar:
+
+- ✅ Integridad de los datos
+- ✅ Reducción de redundancia
+- ✅ Mayor eficiencia en consultas SQL
+- ✅ Mejor organización de la información
+- ✅ Escalabilidad para futuros dashboards y modelos predictivos
+
+
+![Universidad Nacional Hermilio Valdizán](./Picture/Unheval.png)
 
 ## Tareas (Task)
 
-En este análisis, ayudo al departamento de RR.HH. a responder lo siguiente:
+En este análisis, ayudo al área de Gestión Académica a calcular lo siguiente:
 
-1. **Antigüedad:** ¿Cuál es el promedio de antigüedad de los empleados en cada departamento?
-2. **Retención:** ¿Cuántos empleados en cada departamento siguen trabajando actualmente en la empresa?
-3. **Satisfacción vs. Antigüedad:** ¿Cómo se compara la satisfacción laboral de los empleados en diferentes niveles de antigüedad?
-4. **Horas Extras:** ¿Qué porcentaje de empleados que trabajan horas extras han dejado la empresa?
-5. **Desempeño por Viajes:** Clasificar los departamentos por el promedio de calificación de los gerentes, desglosado por frecuencia de viajes de negocios.
+1. **Distribución de egresados por escuela académica**
+🎯 Negocio: La universidad quiere conocer qué escuelas concentran más egresados.
+📊 Reto: Contar egresados por escuela.
+🧠 SQL: GROUP BY, COUNT(*)
+2. Distribución de egresados por sexo
+
+🎯 Negocio: Analizar equidad de género en egresados.
+📊 Reto: Número y porcentaje por sexo.
+🧠 SQL: GROUP BY, COUNT, cálculo de porcentaje.
+4. Edad promedio de los egresados
+
+🎯 Negocio: Identificar perfil etario del egresado.
+📊 Reto: Promedio, mínimo y máximo de edad.
+🧠 SQL: AVG(), MIN(), MAX()
+
+5. Número de egresados por departamento de nacimiento
+
+🎯 Negocio: Identificar zonas geográficas de mayor procedencia.
+📊 Reto: Agrupar por Dim_Ubicacion.Departamento
+🧠 SQL: JOIN + GROUP BY
+
+----------------
 6. **Capacitación:** ¿Existe una correlación positiva entre el número de oportunidades de capacitación tomadas y la satisfacción laboral?
 7. **Talento Top:** Identificar a los tres mejores empleados según la calificación de su gerente en cada departamento.
 8. **Distancia al Trabajo:** Categorizar a los empleados según su distancia al trabajo y mostrar el promedio de satisfacción laboral en cada categoría.
