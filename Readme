@@ -1,0 +1,476 @@
+# 🎓 Análisis de Egresados UNHEVAL - Rendimiento y Trayectoria Académica
+
+## 📌 Descripción del proyecto
+
+Proyecto de análisis de datos desarrollado a partir del dataset **“Alumnos Egresados de Pregrado de la Universidad Nacional Hermilio Valdizán - 2024” (UNHEVAL)**.
+
+El proyecto analiza información académica, demográfica y geográfica de los egresados con el objetivo de identificar patrones relacionados con su **rendimiento académico, trayectoria universitaria, tiempo de formación, procedencia geográfica y características demográficas**.
+
+Para ello, se diseñó un **modelo dimensional tipo estrella** y se desarrollaron consultas SQL de dificultad progresiva, desde análisis descriptivos básicos hasta análisis avanzados utilizando **CTEs, CASE WHEN, Window Functions, agregaciones y múltiples JOINs**.
+
+El análisis busca demostrar cómo los datos académicos pueden transformarse en información útil para la **toma de decisiones y gestión institucional en educación superior**.
+
+---
+
+## 🎯 Objetivo de negocio
+
+Analizar la información de los egresados de pregrado de la UNHEVAL para identificar patrones de rendimiento académico y trayectoria universitaria que permitan comprender las diferencias entre escuelas académicas, modalidades de estudio, cohortes y perfiles de estudiantes.
+
+### Objetivos específicos
+
+* Analizar la distribución de egresados por escuela académica, modalidad, sexo y sede.
+* Identificar las principales zonas geográficas de procedencia de los egresados.
+* Evaluar el rendimiento académico mediante el promedio final.
+* Comparar el rendimiento académico entre escuelas y modalidades.
+* Analizar las cohortes según el año y semestre de primera matrícula.
+* Calcular el tiempo transcurrido entre la primera matrícula y el egreso.
+* Identificar escuelas con menor tiempo promedio de formación.
+* Clasificar a los egresados según su nivel de rendimiento académico.
+* Identificar patrones asociados a los egresados de alto rendimiento.
+
+---
+
+## ❓ Pregunta central de negocio
+
+> **¿Qué patrones existen en el perfil, rendimiento académico y trayectoria universitaria de los egresados de pregrado de la UNHEVAL y qué diferencias pueden identificarse entre escuelas, modalidades y cohortes?**
+
+---
+
+# 🗂️ Dataset
+
+### Fuente
+
+**Alumnos Egresados de Pregrado de la Universidad Nacional Hermilio Valdizán - 2024**
+
+### Unidad de análisis
+
+Cada registro representa a un **egresado de pregrado**.
+
+### Principales variables
+
+| Categoría      | Variables                                 |
+| -------------- | ----------------------------------------- |
+| Identificación | UUID                                      |
+| Geografía      | UBIGEO, DEPARTAMENTO, PROVINCIA, DISTRITO |
+| Académica      | ESCUELA_ACADEMICA, MODALIDAD, SEDE        |
+| Demográfica    | EDAD, SEXO                                |
+| Matrícula      | ANIO_MATRICULA1, SEMESTRE_MATRICULA1      |
+| Egreso         | ANIO_EGRESO, SEMESTRE_EGRESO              |
+| Rendimiento    | PROMEDIO_FINAL                            |
+| Control        | FECHA_CORTE                               |
+
+> Los identificadores personales se encuentran anonimizados en el dataset.
+
+---
+
+# 🏗️ Modelo de datos
+
+Para facilitar el análisis y mejorar la organización de la información se propone un **modelo dimensional tipo estrella**.
+
+## Tabla de hechos
+
+### `Fact_Egresados`
+
+Contiene la información principal utilizada para realizar las métricas y análisis.
+
+Principales campos:
+
+* UUID
+* EDAD
+* PROMEDIO_FINAL
+* ANIO_MATRICULA1
+* SEMESTRE_MATRICULA1
+* ANIO_EGRESO
+* SEMESTRE_EGRESO
+* claves foráneas hacia las dimensiones
+
+## Tablas dimensión
+
+### `Dim_Escuela`
+
+Información de las escuelas académicas.
+
+### `Dim_Ubicacion`
+
+Información geográfica basada en el código UBIGEO del INEI.
+
+### `Dim_Modalidad`
+
+Clasificación de la modalidad de estudios.
+
+### `Dim_Sede`
+
+Información de la sede donde realizó sus estudios.
+
+### `Dim_Sexo`
+
+Clasificación del sexo del egresado.
+
+### `Dim_Fecha`
+
+Dimensión temporal para facilitar análisis basados en fechas.
+
+### Modelo conceptual
+
+```text
+                         Dim_Ubicacion
+                              │
+                              │
+                         ┌────┴────┐
+                         │         │
+                   Dim_Escuela  Dim_Sexo
+                         │         │
+                         └────┬────┘
+                              │
+                       Fact_Egresados
+                         │    │    │
+              ┌──────────┘    │    └──────────┐
+              │               │               │
+       Dim_Modalidad       Dim_Sede       Dim_Fecha
+```
+
+### Cardinalidad
+
+Las relaciones principales siguen el patrón:
+
+```text
+Dimensión (1) ──────── (N) Fact_Egresados
+```
+
+Esto permite utilizar las dimensiones para segmentar y analizar las métricas almacenadas en la tabla de hechos.
+
+---
+
+# 🔎 Preguntas de negocio
+
+El análisis se estructuró en tres niveles de dificultad.
+
+## 🟢 Nivel básico
+
+### 01. Distribución de egresados por escuela
+
+¿Cuántos egresados tiene cada escuela académica?
+
+**Técnicas SQL:** `GROUP BY`, `COUNT`, `ORDER BY`.
+
+### 02. Distribución de egresados por sexo
+
+¿Cuál es la distribución de egresados según sexo y qué porcentaje representa cada grupo?
+
+**Técnicas SQL:** `GROUP BY`, `COUNT`, Window Functions.
+
+### 03. Egresados por modalidad
+
+¿Cuántos egresados corresponden a cada modalidad de estudio?
+
+**Técnicas SQL:** `JOIN`, `GROUP BY`, `COUNT`.
+
+### 04. Perfil etario
+
+¿Cuál es la edad promedio, mínima y máxima de los egresados?
+
+**Técnicas SQL:** `AVG`, `MIN`, `MAX`.
+
+### 05. Procedencia geográfica
+
+¿Cuáles son los departamentos de nacimiento con mayor cantidad de egresados?
+
+**Técnicas SQL:** `JOIN`, `GROUP BY`, `COUNT`, `ORDER BY`.
+
+---
+
+# 🟡 Nivel intermedio
+
+### 06. Escuelas con mayor rendimiento académico
+
+¿Cuáles son las escuelas académicas con mayor promedio final?
+
+**Técnicas SQL:** agregaciones, `GROUP BY`, `ORDER BY`, `LIMIT/TOP`.
+
+### 07. Rendimiento por modalidad
+
+¿Existen diferencias en el promedio académico según la modalidad de estudio?
+
+**Técnicas SQL:** `JOIN`, `GROUP BY`, `AVG`.
+
+### 08. Tiempo promedio de formación
+
+¿Cuánto tiempo transcurre, en promedio, desde la primera matrícula hasta el egreso?
+
+El cálculo considera tanto el año como el semestre de matrícula y egreso.
+
+```text
+(AÑO_EGRESO × 2 + SEMESTRE_EGRESO)
+-
+(AÑO_MATRICULA1 × 2 + SEMESTRE_MATRICULA1)
+```
+
+Esto permite obtener la duración en **semestres académicos** y posteriormente convertirla a años.
+
+**Técnicas SQL:** operaciones matemáticas, `AVG`, análisis temporal.
+
+### 09. Análisis de cohortes
+
+¿Cómo se distribuyen los egresados según su año de primera matrícula?
+
+**Técnicas SQL:** `GROUP BY`, agregaciones.
+
+### 10. Perfil etario por escuela
+
+¿Cuál es la edad promedio de los egresados de cada escuela académica?
+
+**Técnicas SQL:** `JOIN`, `GROUP BY`, `AVG`.
+
+---
+
+# 🔴 Nivel avanzado
+
+### 11. Ranking de eficiencia académica
+
+¿Qué escuelas presentan el menor tiempo promedio de formación?
+
+El ranking considera la diferencia entre primera matrícula y egreso utilizando **año y semestre**.
+
+**Técnicas SQL:**
+
+* `CTE`
+* Agregaciones
+* `RANK() OVER()`
+* Análisis temporal
+
+### 12. Análisis de cohortes
+
+¿Cómo se comportan las diferentes cohortes de ingreso en términos de egreso?
+
+**Técnicas SQL:**
+
+* `CTE`
+* `JOIN`
+* Agregaciones
+* Análisis de cohortes
+
+### 13. Segmentación de rendimiento
+
+¿Cómo pueden clasificarse los egresados según su promedio final?
+
+Ejemplo:
+
+```text
+< 13       → Bajo
+13 - 15    → Medio
+> 15       → Alto
+```
+
+**Técnicas SQL:** `CASE WHEN`.
+
+### 14. Rendimiento por procedencia geográfica
+
+¿Cuáles son las provincias cuyos egresados presentan los mayores promedios académicos?
+
+**Técnicas SQL:**
+
+* `JOIN`
+* `GROUP BY`
+* `AVG`
+* `RANK()` / `ORDER BY`
+
+### 15. Perfil del egresado de alto rendimiento
+
+¿Qué combinaciones de escuela, modalidad, sexo y procedencia geográfica presentan mayor concentración de egresados con alto rendimiento?
+
+**Técnicas SQL:**
+
+* CTEs
+* `CASE WHEN`
+* `GROUP BY`
+* múltiples `JOIN`
+* Window Functions
+
+---
+
+# 📊 Principales KPIs
+
+El proyecto permite construir indicadores como:
+
+| KPI                          | Descripción                                     |
+| ---------------------------- | ----------------------------------------------- |
+| Total de egresados           | Cantidad total de egresados analizados          |
+| Promedio académico           | Promedio de `PROMEDIO_FINAL`                    |
+| Edad promedio                | Edad promedio de los egresados                  |
+| Tiempo promedio de formación | Semestres/años entre primera matrícula y egreso |
+| Egresados por escuela        | Distribución institucional                      |
+| Egresados por modalidad      | Presencial vs. Virtual                          |
+| Egresados por cohorte        | Distribución según primera matrícula            |
+| % de alto rendimiento        | Proporción de egresados con rendimiento alto    |
+| Ranking de eficiencia        | Escuelas según tiempo promedio de formación     |
+
+---
+
+# 🧠 Enfoque analítico
+
+El proyecto sigue un proceso de análisis **end-to-end**:
+
+```text
+                 DATASET
+                    │
+                    ▼
+            EXPLORACIÓN DE DATOS
+                    │
+                    ▼
+              DATA CLEANING
+                    │
+                    ▼
+          MODELO DIMENSIONAL
+                    │
+                    ▼
+               SQL ANALYSIS
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+     DESCRIPTIVO           AVANZADO
+          │                   │
+          └─────────┬─────────┘
+                    ▼
+             BUSINESS INSIGHTS
+                    │
+                    ▼
+              POWER BI
+                    │
+                    ▼
+          TOMA DE DECISIONES
+```
+
+---
+
+# 💻 Tecnologías utilizadas
+
+### SQL
+
+Utilizado para:
+
+* Exploración de datos.
+* Transformación.
+* Agregación.
+* Análisis de cohortes.
+* Segmentación.
+* Ranking.
+* Cálculo de métricas.
+
+### Técnicas SQL
+
+* `SELECT`
+* `WHERE`
+* `GROUP BY`
+* `HAVING`
+* `ORDER BY`
+* `JOIN`
+* `CASE WHEN`
+* `CTE`
+* `WINDOW FUNCTIONS`
+* `RANK()`
+* `COUNT()`
+* `AVG()`
+* `MIN()`
+* `MAX()`
+
+### Power BI
+
+Utilizado para la visualización de indicadores y construcción del dashboard analítico.
+
+### Modelado dimensional
+
+Se utiliza un esquema estrella para separar:
+
+* Métricas y eventos.
+* Atributos descriptivos.
+* Dimensiones analíticas.
+
+---
+
+# 📁 Estructura del proyecto
+
+```text
+analisis-egresados-unheval/
+│
+├── README.md
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── database/
+│   ├── 01_create_tables.sql
+│   ├── 02_create_dimensions.sql
+│   ├── 03_create_fact_table.sql
+│   └── 04_data_model.sql
+│
+├── sql/
+│   ├── 01_data_exploration.sql
+│   ├── 02_basic_analysis.sql
+│   ├── 03_intermediate_analysis.sql
+│   └── 04_advanced_analysis.sql
+│
+├── docs/
+│   ├── business_questions.md
+│   ├── data_dictionary.md
+│   ├── data_model.md
+│   └── methodology.md
+│
+├── images/
+│   ├── data_model.png
+│   └── dashboard_preview.png
+│
+└── dashboard/
+    └── unheval_egresados_dashboard.pbix
+```
+
+---
+
+# 📈 Resultados esperados
+
+El análisis busca generar evidencia para responder preguntas como:
+
+* ¿Qué escuelas concentran la mayor cantidad de egresados?
+* ¿Qué escuelas presentan mejor rendimiento académico?
+* ¿Existe diferencia de rendimiento entre modalidades?
+* ¿Cuánto tiempo toma, en promedio, completar la trayectoria universitaria?
+* ¿Qué escuelas presentan mayor eficiencia en tiempo de formación?
+* ¿Qué cohortes concentran mayor cantidad de egresados?
+* ¿Cuál es el perfil predominante de los egresados de alto rendimiento?
+* ¿Qué zonas geográficas concentran la procedencia de los egresados?
+
+> Los resultados y conclusiones definitivas deben establecerse después de ejecutar las consultas sobre el dataset completo.
+
+---
+
+# 🔐 Consideraciones de privacidad
+
+El dataset utiliza un identificador anonimizado (`UUID`) para representar el DNI del egresado.
+
+El proyecto no debe intentar reconstruir, inferir o exponer información personal identificable de los estudiantes.
+
+---
+
+# 🚀 Próximas mejoras
+
+Como evolución del proyecto se podrían incorporar:
+
+* Dashboard ejecutivo en Power BI.
+* Análisis de distribución y outliers del promedio académico.
+* Análisis de cohortes más avanzado.
+* Comparación entre escuelas y sedes.
+* Indicadores de dispersión del tiempo de formación.
+* Análisis estadístico de factores asociados al rendimiento.
+* Automatización de la actualización de datos.
+* Implementación de un pipeline ETL/ELT.
+* Publicación de resultados mediante un dashboard interactivo.
+
+---
+
+# 👤 Autor
+
+**Bryan Lozano**
+
+Data Analyst | Business Intelligence | SQL | Power BI | Python
+
+Proyecto desarrollado como parte del portafolio profesional de análisis de datos aplicado al sector de educación superior.
