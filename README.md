@@ -58,93 +58,52 @@ La normalización permitió garantizar:
 
 En este análisis, ayudo al área de Gestión Académica a calcular lo siguiente:
 
-1. **Distribución de egresados por escuela académica**
-🎯 Negocio: La universidad quiere conocer qué escuelas concentran más egresados.
-📊 Reto: Contar egresados por escuela.
-🧠 SQL: GROUP BY, COUNT(*)
-2. Distribución de egresados por sexo
+🟢 Nivel básico
+01. **Distribución de egresados por escuela:** ¿Cuántos egresados tiene cada escuela académica?
 
-🎯 Negocio: Analizar equidad de género en egresados.
-📊 Reto: Número y porcentaje por sexo.
-🧠 SQL: GROUP BY, COUNT, cálculo de porcentaje.
-4. Edad promedio de los egresados
+02. **Distribución de egresados por sexo:**
+¿Cuál es la distribución de egresados según sexo y qué porcentaje representa cada grupo?
 
-🎯 Negocio: Identificar perfil etario del egresado.
-📊 Reto: Promedio, mínimo y máximo de edad.
-🧠 SQL: AVG(), MIN(), MAX()
+03. **Egresados por modalidad:**
+¿Cuántos egresados corresponden a cada modalidad de estudio?
 
-5. Número de egresados por departamento de nacimiento
+04. **Perfil etario:**
+¿Cuál es la edad promedio, mínima y máxima de los egresados?
 
-🎯 Negocio: Identificar zonas geográficas de mayor procedencia.
-📊 Reto: Agrupar por Dim_Ubicacion.Departamento
-🧠 SQL: JOIN + GROUP BY
+05. **Procedencia geográfica:**
+¿Cuáles son los departamentos de nacimiento con mayor cantidad de egresados?
 
-----------------
-6. Top 5 escuelas con mayor promedio académico
+🟡 Nivel intermedio
+06. **Escuelas con mayor rendimiento académico:**
+¿Cuáles son las escuelas académicas con mayor promedio final?
 
-🎯 Negocio: Detectar escuelas con mejor desempeño académico.
-📊 Reto: Ranking de escuelas por promedio final.
-🧠 SQL: GROUP BY + ORDER BY + TOP/LIMIT
+07. **Rendimiento por modalidad:**
+¿Existen diferencias en el promedio académico según la modalidad de estudio?
 
-8. Tiempo promedio de formación (matrícula vs egreso)
+08. **Tiempo promedio de formación:**
+¿Cuánto tiempo transcurre, en promedio, desde la primera matrícula hasta el egreso?
 
-🎯 Negocio: Medir eficiencia académica.
-📊 Reto: Diferencia entre ANIO_EGRESO y ANIO_MATRICULA1.
-🧠 SQL: DATEDIFF logic + agregación
-9. Egresados por cohorte de ingreso (año de matrícula)
+09. **Análisis de cohortes:**
+¿Cómo se distribuyen los egresados según su año de primera matrícula?
 
-🎯 Negocio: Analizar generaciones de ingreso.
-📊 Reto: Agrupar por ANIO_MATRICULA1.
-🧠 SQL: GROUP BY
-10. Distribución de edad por escuela académica
+10. **Perfil etario por escuela:**
+¿Cuál es la edad promedio de los egresados de cada escuela académica?
 
-🎯 Negocio: Identificar perfiles etarios por carrera.
-📊 Reto: Edad promedio por escuela.
-🧠 SQL: GROUP BY Dim_Escuela
+🔴 Nivel avanzado
+11. **Ranking de eficiencia académica:**
+¿Qué escuelas presentan el menor tiempo promedio de formación?
 
-----------------
+12. **Análisis de cohortes:**
+¿Cómo se comportan las diferentes cohortes de ingreso en términos de egreso?
 
-11. Ranking de escuelas por eficiencia académica (tiempo de egreso)
+13. **Segmentación de rendimiento:**
+¿Cómo pueden clasificarse los egresados según su promedio final?
 
-🎯 Negocio: Identificar escuelas donde los alumnos egresan más rápido.
-📊 Reto: Promedio de duración por escuela + ranking.
-🧠 SQL:
+14. **Rendimiento por procedencia geográfica:**
+¿Cuáles son las provincias cuyos egresados presentan los mayores promedios académicos?
 
-DATEDIFF(anio_egreso, anio_matricula1)
-WINDOW FUNCTION (RANK())
-
-13. Segmentación de egresados por rendimiento (CASE WHEN)
-
-🎯 Negocio: Clasificar estudiantes según desempeño académico.
-📊 Reto: Crear categorías:
-
-Bajo (<13)
-Medio (13–15)
-Alto (>15)
-🧠 SQL: CASE WHEN
-
-14. Top provincias con mejores promedios académicos
-
-🎯 Negocio: Analizar calidad académica según origen geográfico.
-📊 Reto: Promedio final por provincia + ranking.
-🧠 SQL: JOIN Dim_Ubicacion + WINDOW FUNCTION
-
-15. Análisis combinado: perfil del egresado ideal
-
-🎯 Negocio: Identificar combinación óptima de atributos de alto rendimiento.
-📊 Reto: Cruce de:
-
-Escuela
-Modalidad
-Sexo
-Ubicación
-con filtro de PROMEDIO_FINAL alto (ej. > 15)
-🧠 SQL:
-CTEs múltiples
-CASE WHEN
-GROUP BY múltiples dimensiones
-WINDOW FUNCTIONS
-
+15. **Perfil del egresado de alto rendimiento:**
+¿Qué combinaciones de escuela, modalidad, sexo y procedencia geográfica presentan mayor concentración de egresados con alto rendimiento?
 
 ## Limpieza de Datos
 
@@ -415,3 +374,127 @@ ORDER BY promedio_alto_rendimiento DESC;
 ### Conclusion
 
 - Este.
+
+
+
+
+# 🎓 Análisis de Egresados UNHEVAL - Rendimiento y Trayectoria Académica
+
+## 📌 Descripción del proyecto
+
+Breve descripción del problema y propósito del análisis.
+
+---
+
+## 🎯 Objetivo de negocio
+
+Objetivo general del proyecto.
+
+---
+
+## 📊 Dataset
+
+Información general del dataset:
+
+- Institución: Universidad Nacional Hermilio Valdizán
+- Año analizado: 2024
+- Unidad de análisis: Egresados de pregrado
+- Variables principales:
+  - Escuela académica
+  - Modalidad
+  - Sede
+  - Sexo
+  - Edad
+  - Procedencia geográfica
+  - Año y semestre de matrícula
+  - Año y semestre de egreso
+  - Promedio final
+
+---
+
+## 🏗️ Modelo de datos
+
+Descripción del modelo estrella.
+
+### Tabla de hechos
+
+- Fact_Egresados
+
+### Dimensiones
+
+- Dim_Escuela
+- Dim_Ubicacion
+- Dim_Modalidad
+- Dim_Sede
+- Dim_Sexo
+- Dim_Fecha
+
+---
+
+## ❓ Preguntas de negocio
+
+Lista de las preguntas analíticas desarrolladas.
+
+---
+
+## 🔎 Análisis realizado
+
+### Nivel básico
+
+- Distribución de egresados por escuela.
+- Distribución por sexo.
+- Egresados por modalidad.
+- Análisis de edad.
+- Procedencia geográfica.
+
+### Nivel intermedio
+
+- Ranking de escuelas por rendimiento.
+- Comparación de rendimiento por modalidad.
+- Tiempo promedio de formación.
+- Análisis de cohortes.
+- Perfil etario por escuela.
+
+### Nivel avanzado
+
+- Ranking de eficiencia académica.
+- Análisis de cohortes.
+- Segmentación de rendimiento.
+- Ranking geográfico.
+- Perfil del egresado de alto rendimiento.
+
+---
+
+## 💻 Tecnologías utilizadas
+
+- SQL
+- PostgreSQL / SQL Server
+- Power BI
+- Excel
+
+---
+
+## 📈 Principales métricas
+
+- Total de egresados
+- Promedio académico
+- Tiempo promedio de formación
+- Ranking de escuelas
+- Distribución por modalidad
+- Distribución geográfica
+- Cohortes de ingreso
+- Segmentación de rendimiento
+
+---
+
+## 📂 Estructura del proyecto
+
+Explicación breve de las carpetas.
+
+---
+
+## 👤 Autor
+
+Tu nombre
+
+LinkedIn | GitHub
