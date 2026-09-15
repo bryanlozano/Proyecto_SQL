@@ -107,45 +107,63 @@ En este análisis, ayudo al área de Gestión Académica a calcular lo siguiente
 
 ## Limpieza de Datos
 
-Antes de realizar el análisis, es fundamental asegurar que los datos estén limpios y listos. Dado que las tablas `EducationLevel`, `RatingLevel` y `SatisfiedLevel` son de referencia, el trabajo principal se centra en las tablas `Employee` y `PerformanceRating`.
+Antes de realizar el análisis, es fundamental asegurar que los datos estén limpios y listos. Dado que las tablas `Dim_Escuela` y `Dim_Ubicacion` son de referencia, el trabajo principal se centra en la tabla `Fact_Egresados`.
+
+
+1. CONTEO GENERAL DE REGISTROS 
+
+Objetivo: Determinar el tamaño inicial de la población analizada.
+```sql
+SELECT COUNT(*) AS TOTAL_REGISTROS FROM Fact_Egresados; 
+```
+
+2. IDENTIFICAR DUPLICADOS POR UUID 
+
+Objetivo: Verificar que cada egresado esté representado por un único registro.
+
+Resultado esperado: Un UUID debería aparecer una sola vez.
+```sql
+SELECT UUID, COUNT(*) AS CANTIDAD_REGISTROS FROM Fact_Egresados 
+GROUP BY UUID HAVING COUNT(*) > 1 ORDER BY CANTIDAD_REGISTROS DESC; 
+```
+
+3. CANTIDAD DE EGRESADOS ÚNICOS
+```sql 
+SELECT COUNT(DISTINCT UUID) AS EGRESADOS_UNICOS FROM Fact_Egresados;
+```
+
+4. COMPARACIÓN ENTRE REGISTROS Y EGRESADOS ÚNICOS 
+
+Permite identificar rápidamente si existen duplicados. 
+```sql
+SELECT COUNT(*) AS TOTAL_REGISTROS, 
+COUNT(DISTINCT UUID) AS EGRESADOS_UNICOS, 
+COUNT(*) - COUNT(DISTINCT UUID) AS POSIBLES_DUPLICADOS FROM Fact_Egresados; 
+```
 
 #### Valores Nulos o Faltantes
 
 Primero, verifiqué la existencia de valores faltantes en los dos campos clave: `EmployeeID` y `PerformanceID`. No se encontraron valores nulos.
 
-```sql
--- Verificar valores faltantes en la tabla Employee --
+5. PERFILAMIENTO DE VALORES NULOS
 
-SELECT COUNT(*) AS MissingValues
-FROM Employee
-WHERE EmployeeID IS NULL;
-
---Verificar valores faltantes en la tabla PerformanceRating--
-
-SELECT COUNT(*) AS MissingValues
-FROM PerformanceRating
-WHERE PerformanceID IS NULL
-    OR EmployeeID IS NULL;
-```
-
-A continuación, es vital asegurarse de que se eliminen las filas duplicadas, en caso de encontrarse, nuevamente en los campos clave. No se encontraron duplicados.
+Objetivo: Identificar variables con información faltante.
 
 ```sql
--- Verificar valores duplicados en la tabla Employe --
-
-SELECT EmployeeID, COUNT(*)
-FROM Employee
-GROUP BY EmployeeID
-HAVING COUNT(*) > 1;
-
--- Verificar valores duplicados en la tabla PerformanceRating --
-
-SELECT PerformanceID, COUNT(*)
-FROM PerformanceRating
-GROUP BY PerformanceID
-HAVING COUNT(*) > 1;
+SELECT SUM(CASE WHEN UUID IS NULL THEN 1 ELSE 0 END) AS UUID_NULOS, 
+SUM(CASE WHEN EDAD IS NULL THEN 1 ELSE 0 END) AS EDAD_NULOS, 
+SUM(CASE WHEN SEXO IS NULL THEN 1 ELSE 0 END) AS SEXO_NULOS, 
+SUM(CASE WHEN COD_ESCUELA IS NULL THEN 1 ELSE 0 END) AS ESCUELA_NULOS, 
+SUM(CASE WHEN MODALIDAD IS NULL THEN 1 ELSE 0 END) AS MODALIDAD_NULOS, 
+SUM(CASE WHEN SEDE IS NULL THEN 1 ELSE 0 END) AS SEDE_NULOS, 
+SUM(CASE WHEN UBIGEO IS NULL THEN 1 ELSE 0 END) AS UBIGEO_NULOS, 
+SUM(CASE WHEN PROMEDIO_FINAL IS NULL THEN 1 ELSE 0 END) AS PROMEDIO_NULOS, 
+SUM(CASE WHEN ANIO_MATRICULA1 IS NULL THEN 1 ELSE 0 END) AS ANIO_MATRICULA_NULOS, 
+SUM(CASE WHEN SEMESTRE_MATRICULA1 IS NULL THEN 1 ELSE 0 END) AS SEMESTRE_MATRICULA_NULOS, 
+SUM(CASE WHEN ANIO_EGRESO IS NULL THEN 1 ELSE 0 END) AS ANIO_EGRESO_NULOS, 
+SUM(CASE WHEN SEMESTRE_EGRESO IS NULL THEN 1 ELSE 0 END) AS SEMESTRE_EGRESO_NULOS 
+FROM Fact_Egresados;
 ```
-
 
 ## Análisis Exploratorio de Datos (EDA) e Insights
 
@@ -175,7 +193,7 @@ Para .
 SELECT 
     SEXO,
     COUNT(*) AS total,
-    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER(), 2) AS porcentaje
+    FORMAT(1.0 * COUNT(*) / SUM(COUNT(*)) OVER(),'P2') AS porcentaje
 FROM Fact_Egresados
 GROUP BY SEXO
 ```
@@ -190,7 +208,7 @@ A continuación.
 ```sql
 -- Edad promedio de egresados --
 SELECT 
-    AVG(EDAD) AS edad_promedio,
+    ROUND(AVG(EDAD),2) AS edad_promedio,
     MIN(EDAD) AS edad_min,
     MAX(EDAD) AS edad_max
 FROM Fact_Egresados;
@@ -223,7 +241,7 @@ Aquí.
 -- Top 5 escuelas por promedio final
 SELECT TOP 5
     e.ESCUELA_ACADEMICA,
-    AVG(f.PROMEDIO_FINAL) AS promedio
+    ROUND(AVG(f.PROMEDIO_FINAL),2) AS promedio
 FROM Fact_Egresados f
 JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
 GROUP BY e.ESCUELA_ACADEMICA
@@ -239,30 +257,15 @@ Primero.
 
 ```sql
 -- Tiempo promedio de formación --
-
-select avg(
-case 
-when SEMESTRE_EGRESO = SEMESTRE_MATRICULA1 then (ANIO_EGRESO-ANIO_MATRICULA1)+0.5
-when SEMESTRE_EGRESO > SEMESTRE_MATRICULA1 then (ANIO_EGRESO-ANIO_MATRICULA1)+1
-when SEMESTRE_EGRESO < SEMESTRE_MATRICULA1 then (ANIO_EGRESO-ANIO_MATRICULA1)
-else 'ERROR'
-end) as prom_anios_estudio
+select ROUND(AVG(
+            (ANIO_EGRESO - ANIO_MATRICULA1) +
+            CASE
+                WHEN SEMESTRE_EGRESO = SEMESTRE_MATRICULA1 THEN 0.5
+                WHEN SEMESTRE_EGRESO > SEMESTRE_MATRICULA1 THEN 1
+                ELSE 0
+            END
+        ), 2) as prom_anios_estudio
 FROM Fact_Egresados
-```
-
-
-### Pregunta #9: Egresados por cohorte de ingreso (año de matrícula)
-
-Para.
-
-```sql
--- Egresados por peiodo de ingreso (Fecha de corte 30/06/2025) / DEBERÍA VERSE POR AÑO DE EGRESO EN COLUMNA
-SELECT 
-    ANIO_MATRICULA1,
-    COUNT(*) AS total_egresados
-FROM Fact_Egresados
-GROUP BY ANIO_MATRICULA1
-ORDER BY ANIO_MATRICULA1;
 ```
 
 ### Pregunta #10: Distribución de edad por escuela académica
@@ -270,7 +273,7 @@ ORDER BY ANIO_MATRICULA1;
 -- Edad promedio por escuela --
 SELECT 
     e.ESCUELA_ACADEMICA,
-    AVG(f.EDAD) AS edad_promedio
+    round(AVG(f.EDAD),1) AS edad_promedio
 FROM Fact_Egresados f
 JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
 GROUP BY e.ESCUELA_ACADEMICA
@@ -280,49 +283,27 @@ ORDER BY edad_promedio DESC;
 ### Pregunta #11: Ranking de escuelas por eficiencia académica (tiempo de egreso)
 ```sql
 -- Ranking de escuelas por tiempo de egreso / VERIFICAR EXACTITUD --
+WITH A AS (
+    SELECT 
+        e.ESCUELA_ACADEMICA,
+        ROUND(AVG(
+            (ANIO_EGRESO - ANIO_MATRICULA1) +
+            CASE
+                WHEN SEMESTRE_EGRESO = SEMESTRE_MATRICULA1 THEN 0.5
+                WHEN SEMESTRE_EGRESO > SEMESTRE_MATRICULA1 THEN 1
+                ELSE 0
+            END
+        ), 2) AS tiempo_promedio
+    FROM Fact_Egresados f
+    JOIN Dim_Escuela e 
+        ON f.COD_ESCUELA = e.COD_ESCUELA
+    GROUP BY e.ESCUELA_ACADEMICA
+)
 SELECT 
-    e.ESCUELA_ACADEMICA,
-    AVG(f.ANIO_EGRESO - f.ANIO_MATRICULA1) AS tiempo_promedio,
-    RANK() OVER (
-        ORDER BY AVG(f.ANIO_EGRESO - f.ANIO_MATRICULA1)
-    ) AS ranking
-FROM Fact_Egresados f
-JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
-GROUP BY e.ESCUELA_ACADEMICA;
------------------------
-SELECT
-    e.ESCUELA_ACADEMICA,
-    COUNT(*) AS TOTAL_EGRESADOS,
-    ROUND(
-        AVG(
-            (f.ANIO_EGRESO * 2 + f.SEMESTRE_EGRESO)
-            - (f.ANIO_MATRICULA1 * 2 + f.SEMESTRE_MATRICULA1)
-        ),
-        2
-    ) AS PROMEDIO_SEMESTRES,
-    ROUND(
-        AVG(
-            (
-                (f.ANIO_EGRESO * 2 + f.SEMESTRE_EGRESO)
-                - (f.ANIO_MATRICULA1 * 2 + f.SEMESTRE_MATRICULA1)
-            ) / 2.0
-        ),
-        2
-    ) AS PROMEDIO_ANIOS,
-    RANK() OVER (
-        ORDER BY AVG(
-            (f.ANIO_EGRESO * 2 + f.SEMESTRE_EGRESO)
-            - (f.ANIO_MATRICULA1 * 2 + f.SEMESTRE_MATRICULA1)
-        ) ASC
-    ) AS RANKING_EFICIENCIA
-FROM Fact_Egresados f
-INNER JOIN Dim_Escuela e
-    ON f.COD_ESCUELA = e.COD_ESCUELA
-GROUP BY
-    e.ESCUELA_ACADEMICA
-ORDER BY
-    RANKING_EFICIENCIA,
-    TOTAL_EGRESADOS DESC;
+    ESCUELA_ACADEMICA,
+    tiempo_promedio,
+    RANK() OVER (ORDER BY tiempo_promedio) AS ranking
+FROM A;
 ```
 
 ### Pregunta #13: Segmentación de egresados por rendimiento (CASE WHEN)
@@ -344,38 +325,16 @@ FROM Fact_Egresados;
 -- Top provincias por rendimiento --
 SELECT TOP 10
     u.PROVINCIA,
-    AVG(f.PROMEDIO_FINAL) AS promedio
+    round(AVG(f.PROMEDIO_FINAL),2) AS promedio
 FROM Fact_Egresados f
 JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
 GROUP BY u.PROVINCIA
 ORDER BY promedio DESC
 ```
 
-### Pregunta #15: Análisis combinado: perfil del egresado ideal
-```sql
--- Perfil del egresado de alto rendimiento --
-SELECT 
-    e.ESCUELA_ACADEMICA,
-    SEXO,
-    u.DEPARTAMENTO,
-    AVG(f.PROMEDIO_FINAL) AS promedio_alto_rendimiento,
-    COUNT(*) AS total_egresados
-FROM Fact_Egresados f
-JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
-JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
-WHERE f.PROMEDIO_FINAL > 15
-GROUP BY 
-    e.ESCUELA_ACADEMICA,
-    SEXO,
-    u.DEPARTAMENTO
-ORDER BY promedio_alto_rendimiento DESC;
-```
-
 ### Conclusion
 
 - Este.
-
-
 
 
 # 🎓 Análisis de Egresados UNHEVAL - Rendimiento y Trayectoria Académica
