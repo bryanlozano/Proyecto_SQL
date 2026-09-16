@@ -37,7 +37,7 @@ Analizar la información académica y demográfica de los egresados de pregrado 
 
 Los datos originales, junto con una explicación de cada columna, se pueden encontrar [aquí](https://www.datosabiertos.gob.pe/dataset/alumnos-egresados-de-pregrado-de-la-universidad-nacional-hermilio-valdiz%C3%A1n-2024-unheval).
 
-El dataset fue transformado y normalizado en un modelo relacional compuesto por tres tablas principales:
+El dataset fue transformado y normalizado en un modelo relacional tipo estrella compuesto por tres tablas principales:
 
 `Dim_Escuela`
 `Dim_Ubicacion`
@@ -169,7 +169,7 @@ FROM Fact_Egresados;
 
 ### Pregunta #1: Distribución de egresados por escuela académica
 
-Encontré.
+Objetivo de negocio: La universidad quiere conocer qué escuelas concentran más egresados.
 
 ```sql
 -- Egresados por escuela académica --
@@ -186,7 +186,7 @@ ORDER BY total_egresados DESC;
 
 ### Pregunta #2: Distribución de egresados por sexo
 
-Para .
+Objetivo de negocio: Analizar equidad de género en egresados.
 
 ```sql
 -- Egresados por sexo (cantidad y porcentaje) --
@@ -203,7 +203,7 @@ GROUP BY SEXO
 
 ### Pregunta #4: Edad promedio de los egresados
 
-A continuación.
+Objetivo de negocio: Identificar perfil etario del egresado.
 
 ```sql
 -- Edad promedio de egresados --
@@ -220,7 +220,7 @@ FROM Fact_Egresados;
 
 ### Pregunta #5: Número de egresados por departamento de nacimiento
 
-Para este problema
+Objetivo de negocio: Identificar zonas geográficas de mayor procedencia.
 
 ```sql
 -- Egresados por departamento --
@@ -235,7 +235,7 @@ ORDER BY total_egresados DESC;
 
 ### Pregunta #6: Top 5 escuelas con mayor promedio académico
 
-Aquí.
+Objetivo de negocio: Detectar escuelas con mejor desempeño académico.
 
 ```sql
 -- Top 5 escuelas por promedio final
@@ -253,7 +253,7 @@ ORDER BY promedio DESC
 
 ### Pregunta #8: Tiempo promedio de formación (matrícula vs egreso)
 
-Primero.
+Objetivo de negocio: Medir eficiencia académica.
 
 ```sql
 -- Tiempo promedio de formación --
@@ -269,6 +269,8 @@ FROM Fact_Egresados
 ```
 
 ### Pregunta #10: Distribución de edad por escuela académica
+Objetivo de negocio: Identificar perfiles etarios por carrera.
+
 ```sql
 -- Edad promedio por escuela --
 SELECT 
@@ -281,6 +283,8 @@ ORDER BY edad_promedio DESC;
 ```
 
 ### Pregunta #11: Ranking de escuelas por eficiencia académica (tiempo de egreso)
+Objetivo de negocio: Identificar escuelas donde los alumnos egresan más rápido.
+
 ```sql
 -- Ranking de escuelas por tiempo de egreso / VERIFICAR EXACTITUD --
 WITH A AS (
@@ -307,6 +311,8 @@ FROM A;
 ```
 
 ### Pregunta #13: Segmentación de egresados por rendimiento (CASE WHEN)
+Objetivo de negocio: Clasificar estudiantes según desempeño académico.
+
 ```sql
 -- Segmentación por rendimiento (CASE WHEN) --
 SELECT 
@@ -321,6 +327,8 @@ FROM Fact_Egresados;
 ```
 
 ### Pregunta #14: Top provincias con mejores promedios académicos
+Objetivo de negocio: Analizar calidad académica según origen geográfico.
+
 ```sql
 -- Top provincias por rendimiento --
 SELECT TOP 10
