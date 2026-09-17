@@ -132,8 +132,8 @@ SUM(CASE WHEN ANIO_EGRESO IS NULL THEN 1 ELSE 0 END) AS ANIO_EGRESO_NULOS,
 SUM(CASE WHEN SEMESTRE_EGRESO IS NULL THEN 1 ELSE 0 END) AS SEMESTRE_EGRESO_NULOS 
 FROM Fact_Egresados;
 ```
-![image](./picture/P02A.png)
-![image](./picture/P02B.png)
+![image](./Picture/P02A.png)
+![image](./Picture/P02B.png)
 
 ## 🔎 Análisis Exploratorio de Datos (EDA) e Insights
 
@@ -152,7 +152,7 @@ GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY total_egresados DESC;
 ```
 
-![image](./picture/P1.png)
+![image](./Picture/P1.png)
 
 ### Pregunta #2: Distribución de egresados por sexo
 
@@ -168,7 +168,7 @@ FROM Fact_Egresados
 GROUP BY SEXO
 ```
 
-![image](./picture/P2.png)
+![image](./Picture/P2.png)
 
 
 ### Pregunta #3: Edad promedio de los egresados
@@ -185,7 +185,7 @@ FROM Fact_Egresados;
 
 ```
 
-![image](./picture/P3.png)
+![image](./Picture/P3.png)
 
 
 ### Pregunta #4: Número de egresados por departamento de nacimiento
@@ -202,7 +202,7 @@ JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
 GROUP BY u.DEPARTAMENTO
 ORDER BY total_egresados DESC;
 ```
-![image](./picture/P4.png)
+![image](./Picture/P4.png)
 
 ### Pregunta #5: Top 5 escuelas con mayor promedio académico
 
@@ -219,7 +219,7 @@ GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY promedio DESC
 ```
 
-![image](./picture/P5.png)
+![image](./Picture/P5.png)
 
 
 ### Pregunta #6: Tiempo promedio de formación (matrícula vs egreso)
@@ -238,7 +238,7 @@ select ROUND(AVG(
         ), 2) as prom_anios_estudio
 FROM Fact_Egresados
 ```
-![image](./picture/P6.png)
+![image](./Picture/P6.png)
 
 ### Pregunta #7: Distribución de edad por escuela académica
 Objetivo de negocio: Identificar perfiles etarios por carrera.
@@ -253,7 +253,7 @@ JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
 GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY edad_promedio DESC;
 ```
-![image](./picture/P7.png)
+![image](./Picture/P7.png)
 
 ### Pregunta #8: Ranking de escuelas por eficiencia académica (tiempo de egreso)
 Objetivo de negocio: Identificar escuelas donde los alumnos egresan más rápido.
@@ -282,7 +282,7 @@ SELECT
     RANK() OVER (ORDER BY tiempo_promedio) AS ranking
 FROM A;
 ```
-![image](./picture/P8.png)
+![image](./Picture/P8.png)
 
 ### Pregunta #9: Segmentación de egresados por rendimiento (CASE WHEN)
 Objetivo de negocio: Clasificar estudiantes según desempeño académico.
@@ -299,7 +299,7 @@ SELECT
     END AS categoria_rendimiento
 FROM Fact_Egresados;
 ```
-![image](./picture/P9.png)
+![image](./Picture/P9.png)
 
 ### Pregunta #10: Top provincias con mejores promedios académicos
 Objetivo de negocio: Analizar calidad académica según origen geográfico.
@@ -314,7 +314,7 @@ JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
 GROUP BY u.PROVINCIA
 ORDER BY promedio DESC
 ```
-![image](./picture/P10.png)
+![image](./Picture/P10.png)
 
 ### 📈 Conclusion
 
