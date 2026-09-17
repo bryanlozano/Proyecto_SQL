@@ -1,7 +1,7 @@
 ![Universidad Nacional Hermilio Valdizán](./Picture/Unheval.png)
-# Proyecto SQL: Análisis Académico de Egresados - Rendimiento y Trayectoria Universitaria
+# Proyecto SQL: 🎓 Análisis Académico de Egresados - Rendimiento y Trayectoria Universitaria
 
-## Resumen (Overview)
+## 📌 Resumen (Overview)
 *Este proyecto tiene como objetivo analizar la información académica y demográfica de **los egresados de pregrado de la Universidad Nacional Hermilio Valdizán (UNHEVAL) durante el año 2024**.*
 
 _A partir de un dataset anonimizado de egresados, se desarrolló un proceso de análisis utilizando SQL y un modelo dimensional tipo estrella para explorar indicadores relacionados con el perfil de los estudiantes, su rendimiento académico, procedencia geográfica, modalidad de estudios y trayectoria universitaria._
@@ -12,10 +12,10 @@ _Como parte del proyecto, se diseñaron consultas SQL de complejidad progresiva 
 
 _El resultado es un análisis estructurado que permite generar insights sobre rendimiento académico, eficiencia en la trayectoria formativa y características de la población de egresados._
 
-## Objetivo de negocio
+## 🎯 Objetivo de negocio
 Analizar la información académica y demográfica de los egresados de pregrado de la Universidad Nacional Hermilio Valdizán durante el año 2024, con el propósito de identificar patrones de rendimiento académico, trayectoria universitaria, procedencia geográfica y eficiencia en el tiempo de formación que contribuyan a la toma de decisiones institucionales.
 
-## Objetivos específicos
+## 🎯 Objetivos específicos
 1. Analizar la distribución de egresados según escuela académica, sexo, modalidad de estudio y sede.
 2. Identificar el perfil demográfico y geográfico de los egresados.
 3. Evaluar el rendimiento académico mediante el análisis del promedio final por diferentes dimensiones.
@@ -26,14 +26,14 @@ Analizar la información académica y demográfica de los egresados de pregrado 
 8. Segmentar a los egresados según su rendimiento académico para identificar patrones de alto y bajo desempeño.
 9. Construir rankings académicos y geográficos mediante técnicas avanzadas de SQL.
 
-## Estructura del Proyecto
+## 📂 Estructura del Proyecto
 
 - [Sobre los Datos](#sobre-los-datos)
 - [Tareas](#tareas)
 - [Limpieza de Datos](#limpieza-de-datos)
 - [Análisis Exploratorio de Datos e Insights](#análisis-exploratorio-de-datos-e-insights)
 
-## Sobre los Datos
+## 📊 Sobre los Datos
 
 Los datos originales, junto con una explicación de cada columna, se pueden encontrar [aquí](https://www.datosabiertos.gob.pe/dataset/alumnos-egresados-de-pregrado-de-la-universidad-nacional-hermilio-valdiz%C3%A1n-2024-unheval).
 
@@ -54,7 +54,7 @@ La normalización permitió garantizar:
 
 ![Universidad Nacional Hermilio Valdizán](./Picture/Unheval.png)
 
-## Tareas (Task)
+## ❓ Tareas (Task)
 
 En este análisis, ayudo al área de Gestión Académica a calcular lo siguiente:
 
@@ -64,75 +64,42 @@ En este análisis, ayudo al área de Gestión Académica a calcular lo siguiente
 02. **Distribución de egresados por sexo:**
 ¿Cuál es la distribución de egresados según sexo y qué porcentaje representa cada grupo?
 
-03. **Egresados por modalidad:**
-¿Cuántos egresados corresponden a cada modalidad de estudio?
-
-04. **Perfil etario:**
+03. **Perfil etario:**
 ¿Cuál es la edad promedio, mínima y máxima de los egresados?
 
-05. **Procedencia geográfica:**
+04. **Procedencia geográfica:**
 ¿Cuáles son los departamentos de nacimiento con mayor cantidad de egresados?
 
 🟡 Nivel intermedio
-06. **Escuelas con mayor rendimiento académico:**
+
+05. **Escuelas con mayor rendimiento académico:**
 ¿Cuáles son las escuelas académicas con mayor promedio final?
 
-07. **Rendimiento por modalidad:**
-¿Existen diferencias en el promedio académico según la modalidad de estudio?
-
-08. **Tiempo promedio de formación:**
+06. **Tiempo promedio de formación:**
 ¿Cuánto tiempo transcurre, en promedio, desde la primera matrícula hasta el egreso?
 
-09. **Análisis de cohortes:**
-¿Cómo se distribuyen los egresados según su año de primera matrícula?
-
-10. **Perfil etario por escuela:**
+07. **Perfil etario por escuela:**
 ¿Cuál es la edad promedio de los egresados de cada escuela académica?
 
 🔴 Nivel avanzado
-11. **Ranking de eficiencia académica:**
+
+08. **Ranking de eficiencia académica:**
 ¿Qué escuelas presentan el menor tiempo promedio de formación?
 
-12. **Análisis de cohortes:**
-¿Cómo se comportan las diferentes cohortes de ingreso en términos de egreso?
-
-13. **Segmentación de rendimiento:**
+09. **Segmentación de rendimiento:**
 ¿Cómo pueden clasificarse los egresados según su promedio final?
 
-14. **Rendimiento por procedencia geográfica:**
+10. **Rendimiento por procedencia geográfica:**
 ¿Cuáles son las provincias cuyos egresados presentan los mayores promedios académicos?
-
-15. **Perfil del egresado de alto rendimiento:**
-¿Qué combinaciones de escuela, modalidad, sexo y procedencia geográfica presentan mayor concentración de egresados con alto rendimiento?
 
 ## Limpieza de Datos
 
-Antes de realizar el análisis, es fundamental asegurar que los datos estén limpios y listos. Dado que las tablas `Dim_Escuela` y `Dim_Ubicacion` son de referencia, el trabajo principal se centra en la tabla `Fact_Egresados`.
+Antes de realizar el análisis, es fundamental asegurar que los datos estén limpios y listos. El trabajo principal se centra en la tabla `Fact_Egresados`.
 
 
-1. CONTEO GENERAL DE REGISTROS 
+#### Valores Duplicados
 
-Objetivo: Determinar el tamaño inicial de la población analizada.
-```sql
-SELECT COUNT(*) AS TOTAL_REGISTROS FROM Fact_Egresados; 
-```
-
-2. IDENTIFICAR DUPLICADOS POR UUID 
-
-Objetivo: Verificar que cada egresado esté representado por un único registro.
-
-Resultado esperado: Un UUID debería aparecer una sola vez.
-```sql
-SELECT UUID, COUNT(*) AS CANTIDAD_REGISTROS FROM Fact_Egresados 
-GROUP BY UUID HAVING COUNT(*) > 1 ORDER BY CANTIDAD_REGISTROS DESC; 
-```
-
-3. CANTIDAD DE EGRESADOS ÚNICOS
-```sql 
-SELECT COUNT(DISTINCT UUID) AS EGRESADOS_UNICOS FROM Fact_Egresados;
-```
-
-4. COMPARACIÓN ENTRE REGISTROS Y EGRESADOS ÚNICOS 
+COMPARACIÓN ENTRE REGISTROS Y EGRESADOS ÚNICOS 
 
 Permite identificar rápidamente si existen duplicados. 
 ```sql
@@ -140,12 +107,13 @@ SELECT COUNT(*) AS TOTAL_REGISTROS,
 COUNT(DISTINCT UUID) AS EGRESADOS_UNICOS, 
 COUNT(*) - COUNT(DISTINCT UUID) AS POSIBLES_DUPLICADOS FROM Fact_Egresados; 
 ```
+![image](./picture/P01.png)
 
 #### Valores Nulos o Faltantes
 
 Primero, verifiqué la existencia de valores faltantes en los dos campos clave: `EmployeeID` y `PerformanceID`. No se encontraron valores nulos.
 
-5. PERFILAMIENTO DE VALORES NULOS
+PERFILAMIENTO DE VALORES NULOS
 
 Objetivo: Identificar variables con información faltante.
 
@@ -164,8 +132,10 @@ SUM(CASE WHEN ANIO_EGRESO IS NULL THEN 1 ELSE 0 END) AS ANIO_EGRESO_NULOS,
 SUM(CASE WHEN SEMESTRE_EGRESO IS NULL THEN 1 ELSE 0 END) AS SEMESTRE_EGRESO_NULOS 
 FROM Fact_Egresados;
 ```
+![image](./picture/P02A.png)
+![image](./picture/P02B.png)
 
-## Análisis Exploratorio de Datos (EDA) e Insights
+## 🔎 Análisis Exploratorio de Datos (EDA) e Insights
 
 ### Pregunta #1: Distribución de egresados por escuela académica
 
@@ -201,7 +171,7 @@ GROUP BY SEXO
 ![image](./picture/P2.png)
 
 
-### Pregunta #4: Edad promedio de los egresados
+### Pregunta #3: Edad promedio de los egresados
 
 Objetivo de negocio: Identificar perfil etario del egresado.
 
@@ -218,7 +188,7 @@ FROM Fact_Egresados;
 ![image](./picture/P3.png)
 
 
-### Pregunta #5: Número de egresados por departamento de nacimiento
+### Pregunta #4: Número de egresados por departamento de nacimiento
 
 Objetivo de negocio: Identificar zonas geográficas de mayor procedencia.
 
@@ -232,8 +202,9 @@ JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
 GROUP BY u.DEPARTAMENTO
 ORDER BY total_egresados DESC;
 ```
+![image](./picture/P4.png)
 
-### Pregunta #6: Top 5 escuelas con mayor promedio académico
+### Pregunta #5: Top 5 escuelas con mayor promedio académico
 
 Objetivo de negocio: Detectar escuelas con mejor desempeño académico.
 
@@ -248,10 +219,10 @@ GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY promedio DESC
 ```
 
-![image](./picture/P6.png)
+![image](./picture/P5.png)
 
 
-### Pregunta #8: Tiempo promedio de formación (matrícula vs egreso)
+### Pregunta #6: Tiempo promedio de formación (matrícula vs egreso)
 
 Objetivo de negocio: Medir eficiencia académica.
 
@@ -267,8 +238,9 @@ select ROUND(AVG(
         ), 2) as prom_anios_estudio
 FROM Fact_Egresados
 ```
+![image](./picture/P6.png)
 
-### Pregunta #10: Distribución de edad por escuela académica
+### Pregunta #7: Distribución de edad por escuela académica
 Objetivo de negocio: Identificar perfiles etarios por carrera.
 
 ```sql
@@ -281,8 +253,9 @@ JOIN Dim_Escuela e ON f.COD_ESCUELA = e.COD_ESCUELA
 GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY edad_promedio DESC;
 ```
+![image](./picture/P7.png)
 
-### Pregunta #11: Ranking de escuelas por eficiencia académica (tiempo de egreso)
+### Pregunta #8: Ranking de escuelas por eficiencia académica (tiempo de egreso)
 Objetivo de negocio: Identificar escuelas donde los alumnos egresan más rápido.
 
 ```sql
@@ -309,8 +282,9 @@ SELECT
     RANK() OVER (ORDER BY tiempo_promedio) AS ranking
 FROM A;
 ```
+![image](./picture/P8.png)
 
-### Pregunta #13: Segmentación de egresados por rendimiento (CASE WHEN)
+### Pregunta #9: Segmentación de egresados por rendimiento (CASE WHEN)
 Objetivo de negocio: Clasificar estudiantes según desempeño académico.
 
 ```sql
@@ -325,8 +299,9 @@ SELECT
     END AS categoria_rendimiento
 FROM Fact_Egresados;
 ```
+![image](./picture/P9.png)
 
-### Pregunta #14: Top provincias con mejores promedios académicos
+### Pregunta #10: Top provincias con mejores promedios académicos
 Objetivo de negocio: Analizar calidad académica según origen geográfico.
 
 ```sql
@@ -339,129 +314,8 @@ JOIN Dim_Ubicacion u ON f.UBIGEO = u.UBIGEO
 GROUP BY u.PROVINCIA
 ORDER BY promedio DESC
 ```
+![image](./picture/P10.png)
 
-### Conclusion
+### 📈 Conclusion
 
 - Este.
-
-
-# 🎓 Análisis de Egresados UNHEVAL - Rendimiento y Trayectoria Académica
-
-## 📌 Descripción del proyecto
-
-Breve descripción del problema y propósito del análisis.
-
----
-
-## 🎯 Objetivo de negocio
-
-Objetivo general del proyecto.
-
----
-
-## 📊 Dataset
-
-Información general del dataset:
-
-- Institución: Universidad Nacional Hermilio Valdizán
-- Año analizado: 2024
-- Unidad de análisis: Egresados de pregrado
-- Variables principales:
-  - Escuela académica
-  - Modalidad
-  - Sede
-  - Sexo
-  - Edad
-  - Procedencia geográfica
-  - Año y semestre de matrícula
-  - Año y semestre de egreso
-  - Promedio final
-
----
-
-## 🏗️ Modelo de datos
-
-Descripción del modelo estrella.
-
-### Tabla de hechos
-
-- Fact_Egresados
-
-### Dimensiones
-
-- Dim_Escuela
-- Dim_Ubicacion
-- Dim_Modalidad
-- Dim_Sede
-- Dim_Sexo
-- Dim_Fecha
-
----
-
-## ❓ Preguntas de negocio
-
-Lista de las preguntas analíticas desarrolladas.
-
----
-
-## 🔎 Análisis realizado
-
-### Nivel básico
-
-- Distribución de egresados por escuela.
-- Distribución por sexo.
-- Egresados por modalidad.
-- Análisis de edad.
-- Procedencia geográfica.
-
-### Nivel intermedio
-
-- Ranking de escuelas por rendimiento.
-- Comparación de rendimiento por modalidad.
-- Tiempo promedio de formación.
-- Análisis de cohortes.
-- Perfil etario por escuela.
-
-### Nivel avanzado
-
-- Ranking de eficiencia académica.
-- Análisis de cohortes.
-- Segmentación de rendimiento.
-- Ranking geográfico.
-- Perfil del egresado de alto rendimiento.
-
----
-
-## 💻 Tecnologías utilizadas
-
-- SQL
-- PostgreSQL / SQL Server
-- Power BI
-- Excel
-
----
-
-## 📈 Principales métricas
-
-- Total de egresados
-- Promedio académico
-- Tiempo promedio de formación
-- Ranking de escuelas
-- Distribución por modalidad
-- Distribución geográfica
-- Cohortes de ingreso
-- Segmentación de rendimiento
-
----
-
-## 📂 Estructura del proyecto
-
-Explicación breve de las carpetas.
-
----
-
-## 👤 Autor
-
-Tu nombre
-
-LinkedIn | GitHub
