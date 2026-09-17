@@ -107,7 +107,7 @@ SELECT COUNT(*) AS TOTAL_REGISTROS,
 COUNT(DISTINCT UUID) AS EGRESADOS_UNICOS, 
 COUNT(*) - COUNT(DISTINCT UUID) AS POSIBLES_DUPLICADOS FROM Fact_Egresados; 
 ```
-![image](./picture/P01.png)
+![image](./Picture/P01.png)
 
 #### Valores Nulos o Faltantes
 
