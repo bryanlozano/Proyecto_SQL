@@ -52,7 +52,7 @@ La normalización permitió garantizar:
 - ✅ Escalabilidad para futuros dashboards y modelos predictivos
 
 
-![Universidad Nacional Hermilio Valdizán](./Picture/Unheval.png)
+![Universidad Nacional Hermilio Valdizán](./Picture/Unheval2.png)
 
 ## ❓ Tareas (Task)
 
@@ -153,6 +153,7 @@ ORDER BY total_egresados DESC;
 ```
 
 ![image](./Picture/P1.png)
+![image](./Picture/P1_2.png)
 
 ### Pregunta #2: Distribución de egresados por sexo
 
@@ -254,6 +255,7 @@ GROUP BY e.ESCUELA_ACADEMICA
 ORDER BY edad_promedio DESC;
 ```
 ![image](./Picture/P7.png)
+![image](./Picture/P7_2.png)
 
 ### Pregunta #8: Ranking de escuelas por eficiencia académica (tiempo de egreso)
 Objetivo de negocio: Identificar escuelas donde los alumnos egresan más rápido.
@@ -283,6 +285,7 @@ SELECT
 FROM A;
 ```
 ![image](./Picture/P8.png)
+![image](./Picture/P8_1.png)
 
 ### Pregunta #9: Segmentación de egresados por rendimiento (CASE WHEN)
 Objetivo de negocio: Clasificar estudiantes según desempeño académico.
@@ -316,6 +319,12 @@ ORDER BY promedio DESC
 ```
 ![image](./Picture/P10.png)
 
-### 📈 Conclusion
+### 📈 Conclusiones
 
-- Este.
+- 53% de los egresados son hombres y 47% mujeres, mostrando una distribución relativamente equilibrada.
+
+- La edad promedio es de 26 años, con diferencias entre escuelas: Medicina Humana alcanza 31.3 años, frente a 23.6 años en Educación Inicial.
+
+- El tiempo promedio de formación es de 7.2 años, con una brecha importante entre Educación Física (5.33 años) y Medicina Humana (11.45 años).
+
+- Enfermería, Psicología, Filosofía, Psicología y Ciencias Sociales, Matemática y Física y Educación Inicial destacan por presentar los promedios académicos más altos.
